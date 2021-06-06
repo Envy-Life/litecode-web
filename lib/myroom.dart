@@ -100,8 +100,8 @@ class _myroomState extends State<myroom> {
                         PageTransition(
                             child: Allrooms(),
                             type: PageTransitionType.fade,
-                            duration: Duration(seconds: 3),
-                            reverseDuration: Duration(seconds: 3)));
+                            duration: Duration(seconds: 1),
+                            reverseDuration: Duration(seconds: 1)));
                   },
                   child: Text(
                     'All Rooms',

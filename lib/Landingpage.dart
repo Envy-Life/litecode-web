@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:html';
 
@@ -7,12 +8,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in_web/google_sign_in_web.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:web1/arctry1.dart';
 import 'package:web1/landingside1.dart';
 import 'package:web1/landingside2.dart';
 import 'customshapeclipper.dart';
 import 'myroom.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+import 'package:http/http.dart' as http;
 
 class Landingpage extends StatefulWidget {
   @override
@@ -21,8 +26,19 @@ class Landingpage extends StatefulWidget {
 
 class _LandingpageState extends State<Landingpage>
     with SingleTickerProviderStateMixin {
+  GoogleSignIn _googleSignIn = GoogleSignIn(
+      // hostedDomain: ,
+      clientId:
+          '79632708781-h7uir0jnfribkmjdpiuaibq2a7h7o98p.apps.googleusercontent.com',
+      signInOption: SignInOption.standard,
+      scopes: [
+        'https://www.googleapis.com/auth/userinfo.email',
+        'https://www.googleapis.com/auth/userinfo.profile'
+      ]);
+
   bool signuppressed = false;
   bool tncagreed = false;
+  bool tncagreedpre = true;
   bool obscurepw = true;
   double signupopacity = 0;
   bool obscurepwpre = false;
@@ -47,11 +63,14 @@ class _LandingpageState extends State<Landingpage>
 
   @override
   Widget build(BuildContext context) {
-    if (signuppressed && obscurepwpre != obscurepw) {
+    if (signuppressed &&
+        obscurepwpre != obscurepw &&
+        tncagreed != tncagreedpre) {
       _controller.value = 0;
       _controller.animateTo(1);
     }
     obscurepwpre = !obscurepw;
+    tncagreedpre = !tncagreed;
     return Scaffold(
       body: Stack(
         children: [
@@ -171,7 +190,30 @@ class _LandingpageState extends State<Landingpage>
                                 fontSize: 48,
                                 color: Color(0xFF333333)),
                           ),
-                          onPressed: () {
+                          onPressed: () async {
+                            // var user = await _googleSignIn.signIn();
+                            // var user1 = await user!.authHeaders;
+                            // print(user1['Authorization']);
+
+                            // log(user.authHeaders.toString());
+                            // log("done1");
+
+                            // var whatever = await http.get(
+                            //     Uri.parse(
+                            //         "https://acm-litecode.herokuapp.com/users/me"),
+                            //     headers: {
+                            //       "Authorization":
+                            //           user1['Authorization'].toString()
+                            //     });
+                            // print(whatever.toString());
+                            // log("done2");
+
+                            if (signuppressed) {
+                              obscurepw = true;
+                              obscurepwpre = true;
+                              tncagreed = false;
+                              tncagreedpre = false;
+                            }
                             signuppressed = !signuppressed;
                             setState(() {
                               signupopacity = 1;
@@ -380,6 +422,7 @@ class _LandingpageState extends State<Landingpage>
                                     value: tncagreed,
                                     onChanged: (value) {
                                       setState(() {
+                                        tncagreedpre = !tncagreed;
                                         tncagreed = !tncagreed;
                                       });
                                     },
@@ -440,6 +483,12 @@ class _LandingpageState extends State<Landingpage>
                                   TextSpan(
                                       recognizer: TapGestureRecognizer()
                                         ..onTap = () {
+                                          obscurepw = true;
+                                          obscurepwpre = false;
+
+                                          tncagreed = false;
+                                          tncagreedpre = true;
+
                                           signinpressed = !signinpressed;
                                           setState(() {});
                                         },
